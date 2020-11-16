@@ -1,0 +1,6 @@
+.vscode
+config.py
+export.sh
+*__pycache__*
+*.ipynb_checkpoints*
+*.ipynb
