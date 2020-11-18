@@ -1,4 +1,4 @@
-gcloud functions deploy vwt-d-gew1-fttx-asbuilt-publish-func \
+gcloud functions deploy vwt-d-gew1-fttx-asbuilt-producer-func \
   --entry-point=fileprocessing \
   --runtime=python37 \
   --project=vwt-d-gew1-fttx-asbuilt \
