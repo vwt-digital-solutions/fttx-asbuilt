@@ -29,7 +29,7 @@ def flatten_json(data):
         processed['project'] = key
         for k, v in value.items():
             processed[k] = v
-        processed['id'] = processed['project'] + '-' + processed['weeknummer']
+        processed['id'] = processed['project'] + '-' + processed['weeknumber']
         for k, v in config.COLUMN_MAPPING.items():
             processed[v] = processed.pop(k)
         rows_json.append(processed)
