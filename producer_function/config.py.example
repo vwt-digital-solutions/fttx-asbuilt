@@ -1,0 +1,37 @@
+# Producer function config #
+# inbox bucket
+INBOX_BUCKET = ''
+
+# Topic to publish to
+TOPIC_SETTINGS = {
+    'topic_project_id': '',
+    'topic_name': '',
+    'subject': ''
+}
+
+# Delete file after processing
+DELETE = False
+
+# Media type received and to be stored
+MEDIA_TYPE = 'application/json'
+
+# Column mapping
+COLUMN_MAPPING = {
+    'Col 1': 'col_1',
+    'Col 2': 'col_2',
+}
+
+# Parameters added to pubsub_v1.types.BatchSettings to initialize pubsub PublisherClient
+TOPIC_BATCH_SETTINGS = {
+    'max_messages': 100
+}
+
+# Number of entries to send in a single message
+BATCH_MESSAGE_SIZE = 100
+
+# Project name mapping
+PROJECT_NAME_MAPPING = {
+    'fc_number': 'project_name',
+    '0000': 'Project 1',
+    '1111': 'Project 2'
+}
