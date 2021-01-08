@@ -4,3 +4,4 @@ export.sh
 *__pycache__*
 *.ipynb_checkpoints*
 *.ipynb
+deploy.sh

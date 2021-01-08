@@ -2,6 +2,7 @@ import json
 import logging
 import config
 import traceback
+import re
 from gobits import Gobits
 from google.cloud import pubsub_v1, storage, pubsub
 
@@ -24,14 +25,22 @@ def json_from_bucket(bucket_name, blob_name):
 
 def flatten_json(data):
     rows_json = []
-    for key, value in data.items():
-        processed = {}
-        processed['project'] = key
-        for k, v in value.items():
-            processed[k] = v
-        processed['id'] = processed['project'] + '-' + processed['weeknummer']
-        for k, v in config.COLUMN_MAPPING.items():
-            processed[v] = processed.pop(k)
+    regex_projectnummer = r'B\d*$'
+    data = data.get('Meetgegevens')
+    for item in data:
+        processed = item.copy()
+        processed['id'] = processed['Projectnummer'] + '-' + processed['Weeknummer']
+        # find project number and name
+        if re.search(regex_projectnummer, processed['Projectnummer']):
+            temp = processed['Projectnummer'].split('-')
+            processed['project_number'] = temp[2][1:]
+            processed['dp_area'] = temp[0] + '-' + temp[1]
+            processed['project_name'] = config.PROJECT_NAME_MAPPING.get(processed['project_number'])
+        else:
+            logging.info(f'No project name match found for {processed["Projectnummer"]}')
+            processed['project_number'] = processed['dp_area'] = processed['project_name'] = processed["Projectnummer"]
+        # column mapping
+        processed = {value: processed.get(key) for key, value in config.COLUMN_MAPPING.items()}
         rows_json.append(processed)
     return rows_json
 
