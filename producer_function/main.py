@@ -34,7 +34,7 @@ def flatten_json(data):
         if re.search(regex_projectnummer, processed['Projectnummer']):
             temp = processed['Projectnummer'].split('-')
             processed['project_number'] = temp[2][1:]
-            processed['dp_area'] = temp[0] + '-' + temp[1]
+            processed['pop_area'] = temp[0] + '-' + temp[1]
             processed['project_name'] = config.PROJECT_NAME_MAPPING.get(processed['project_number'])
         else:
             logging.info(f'No project name match found for {processed["Projectnummer"]}')
