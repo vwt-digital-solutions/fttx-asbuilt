@@ -27,10 +27,11 @@ def flatten_json(data):
     data = pd.DataFrame(data.get('Meetgegevens')).copy()
     data['id'] = data['Projectnummer'] + '-' + data['Weeknummer']
     splitted = data['Projectnummer'].str.split('-', expand=True)
-    data['projectnummer'] = splitted.loc[:, 2]
-    data['dp_area'] = splitted.loc[:, 0] + '-' + splitted.loc[:, 1]
-    data['project_name'] = data['dp_area'].apply(lambda x: config.PROJECT_NAME_MAPPING.get(x))
+    data['project_number'] = splitted.loc[:, 2]
+    data['pop_area'] = splitted.loc[:, 0] + '-' + splitted.loc[:, 1]
+    data['project_name'] = data['pop_area'].apply(lambda x: config.PROJECT_NAME_MAPPING.get(x))
     data.rename(columns=config.COLUMN_MAPPING, inplace=True)
+    data = data[list(config.COLUMN_MAPPING.values())]
     return data.to_dict(orient='records')
 
 
