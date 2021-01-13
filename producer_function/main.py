@@ -2,7 +2,7 @@ import json
 import logging
 import config
 import traceback
-import re
+import pandas as pd
 from gobits import Gobits
 from google.cloud import pubsub_v1, storage, pubsub
 
@@ -24,25 +24,15 @@ def json_from_bucket(bucket_name, blob_name):
 
 
 def flatten_json(data):
-    rows_json = []
-    regex_projectnummer = r'B\d*$'
-    data = data.get('Meetgegevens')
-    for item in data:
-        processed = item.copy()
-        processed['id'] = processed['Projectnummer'] + '-' + processed['Weeknummer']
-        # find project number and name
-        if re.search(regex_projectnummer, processed['Projectnummer']):
-            temp = processed['Projectnummer'].split('-')
-            processed['project_number'] = temp[2][1:]
-            processed['dp_area'] = temp[0] + '-' + temp[1]
-            processed['project_name'] = config.PROJECT_NAME_MAPPING.get(processed['project_number'])
-        else:
-            logging.info(f'No project name match found for {processed["Projectnummer"]}')
-            processed['project_number'] = processed['dp_area'] = processed['project_name'] = processed["Projectnummer"]
-        # column mapping
-        processed = {value: processed.get(key) for key, value in config.COLUMN_MAPPING.items()}
-        rows_json.append(processed)
-    return rows_json
+    data = pd.DataFrame(data.get('Meetgegevens')).copy()
+    data['id'] = data['Projectnummer'] + '-' + data['Weeknummer']
+    splitted = data['Projectnummer'].str.split('-', expand=True)
+    data['project_number'] = splitted.loc[:, 2]
+    data['pop_area'] = splitted.loc[:, 0] + '-' + splitted.loc[:, 1]
+    data['project_name'] = data['pop_area'].apply(lambda x: config.PROJECT_NAME_MAPPING.get(x))
+    data.rename(columns=config.COLUMN_MAPPING, inplace=True)
+    data = data[list(config.COLUMN_MAPPING.values())]
+    return data.to_dict(orient='records')
 
 
 def remove_file_from_filestore(bucket_name, filename):
